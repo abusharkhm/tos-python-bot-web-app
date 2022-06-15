@@ -1,6 +1,6 @@
 <template>
   <div id="sidebar">
-    <div id="logo">My Webapp</div>
+    <div id="logo">Archaide</div>
     <div id="nav-link-container">
       <router-link class="nav" to="/dashboard">
         <span>DASHBOARD</span>
@@ -15,10 +15,10 @@
 
 <script>
 export default {
-  name: "sidebar",
+  name: 'sidebar',
   methods: {
     logout() {
-      this.$store.dispatch("logout");
+      this.$store.dispatch('logout');
     },
   },
 };
@@ -35,8 +35,9 @@ export default {
   color: $primary-text;
 
   #logo {
-    text-align: center;
+    align-items: center;
     padding: 1em;
+    background-image: url('/src/assets/archaide_logo.png');
   }
 
   #nav-link-container {
@@ -74,7 +75,7 @@ export default {
       position: relative;
 
       &:after {
-        content: "";
+        content: '';
         position: absolute;
         width: 5px;
         height: 100%;
