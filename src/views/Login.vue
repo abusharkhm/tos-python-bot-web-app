@@ -1,14 +1,9 @@
 <template>
-  <form id="login-form" @submit.prevent="login">
+  <form id="login-form" @submit.prevent="loginUser">
     <input type="text" v-model="username" placeholder="Username" />
     <input type="password" v-model="password" placeholder="Password" />
     <input type="submit" value="Login" />
-    <p
-      id="response"
-      v-bind:class="[level === 'error' ? 'negative' : 'positive']"
-    >
-      {{ response }}
-    </p>
+    <p id="response">{{ response }}</p>
   </form>
 </template>
 
@@ -20,11 +15,10 @@ export default {
       username: "",
       password: "",
       response: "",
-      level: "",
     };
   },
   methods: {
-    login() {
+    loginUser() {
       this.$store.dispatch("login", {
         username: this.username,
         password: this.password,
@@ -35,12 +29,11 @@ export default {
     this.$store.watch(
       (state) => state.auth.error,
       (newValue) => {
+        console.log(newValue);
         this.response = newValue;
-        this.level = "error";
       }
     );
     this.response = this.$route.params.success;
-    this.level = "success";
   },
 };
 </script>
@@ -48,35 +41,65 @@ export default {
 <style lang="scss">
 #login-form {
   position: absolute;
-  left: 50%;
-  top: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
+  left: 50%;
+  top: 45%;
+  z-index: 10;
 
   display: grid;
   gap: 1em;
 
-  input:not([type="submit"]) {
-    padding: 0.5em;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid $primary-light;
+  input {
+    padding: 0.5em 0.5em;
+    width: 325px;
+
+    @media (min-width: 400px) {
+      width: 350px;
+    }
   }
 
   input[type="submit"] {
-    font-size: 1.1rem;
-    letter-spacing: 1.5px;
-    padding: 0.5em;
-    background-color: $primary-dark;
-    border-radius: 5px;
-    border: 1px solid $primary-light;
-    cursor: pointer;
+    background-color: #999999;
+    color: #000000;
+    border: none;
     transition: 0.2s ease;
-    color: $primary-light;
+    border-radius: 1px;
+    padding: 0.75em 0;
+    letter-spacing: 0.5px;
+    cursor: pointer;
 
     &:hover {
-      opacity: 0.85;
+      opacity: 0.5;
     }
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    border: none;
+    border-bottom: solid 2px #bc150a;
+    font-size: 1rem;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 100;
+    letter-spacing: 0.5px;
+
+    &:focus,
+    &:active {
+      outline: none;
+      background: transparent;
+    }
+  }
+
+  ::-webkit-input-placeholder {
+    /* WebKit browsers */
+    color: white;
+    opacity: 0.75 !important;
+  }
+
+  p {
+    color: white;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
   }
 }
 </style>
