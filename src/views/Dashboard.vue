@@ -169,14 +169,10 @@ export default {
       }
 
       & > div:nth-child(6) {
-        grid-area: forbidden;
-      }
-
-      & > div:nth-child(7) {
         grid-area: best_performers;
       }
 
-      & > div:nth-child(8) {
+      & > div:nth-child(7) {
         grid-area: worst_performers;
       }
     }
