@@ -41,6 +41,10 @@ export default {
             root: true,
           });
 
+          commit('SET_INITIAL_DATA', resp.data['data'], {
+            root: true,
+          });
+
           dispatch('fetchCurrentAccountStatus');
 
           setTimeout(() => {
