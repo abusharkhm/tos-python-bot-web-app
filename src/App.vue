@@ -1,23 +1,11 @@
 <template>
   <div id="app">
-    <Sidebar v-if="$route.name !== 'Login'" />
-    <div id="app-container">
-      <router-view />
-      <Footer v-if="$route.name !== 'Login'" />
-    </div>
+    <router-view />
   </div>
 </template>
 
-<script>
-import Sidebar from "./components/Sidebar.vue";
-import Footer from "./components/Footer.vue";
-export default {
-  components: { Sidebar, Footer },
-};
-</script>
-
 <style lang="scss">
-@import url("https://use.typekit.net/ghr2zdi.css");
+@import url('https://use.typekit.net/ghr2zdi.css');
 
 * {
   padding: 0;
@@ -31,26 +19,22 @@ body {
 }
 
 #app {
+  background-image: url('assets/img/red_abstract_bg.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   width: 100%;
   height: 100vh;
-  background-color: $secondary-dark;
-  display: flex;
-  overflow: auto;
-}
-
-#app-container {
-  position: relative;
-  width: 100%;
 }
 
 ::-webkit-scrollbar {
-  background: $third-dark;
+  background: rgba(255, 255, 255, 0.5);
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $primary-light;
+  background: $primary-dark;
 }
 
 .positive {
@@ -59,5 +43,20 @@ body {
 
 .negative {
   color: $primary-red;
+}
+
+.chart-container {
+  position: relative;
+  height: 250px;
+}
+
+.chart {
+  height: 100%;
+  z-index: 10;
+
+  canvas {
+    width: 100% !important;
+    height: 100%;
+  }
 }
 </style>
