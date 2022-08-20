@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   state: {
@@ -42,12 +42,15 @@ export default {
     fetchAccountBalanceHistory({ commit, rootState }) {
       axios
         .get(`/api/account_balance_history/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           commit(
-            "SET_ACCOUNT_BALANCE_HISTORY",
-            res.data["account_balance_history"]
+            'SET_ACCOUNT_BALANCE_HISTORY',
+            res.data['account_balance_history']
           );
         })
         .catch((err) => {
@@ -57,10 +60,13 @@ export default {
     fetchProfitLossHistory({ commit, rootState }) {
       axios
         .get(`/api/profit_loss_history/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
-          commit("SET_PROFIT_LOSS_HISTORY", res.data["profit_loss_history"]);
+          commit('SET_PROFIT_LOSS_HISTORY', res.data['profit_loss_history']);
         })
         .catch((err) => {
           console.log(err);
@@ -69,10 +75,13 @@ export default {
     fetchQueued({ commit, rootState }) {
       axios
         .get(`/api/queued/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
-          commit("SET_QUEUED", res.data["queued"]);
+          commit('SET_QUEUED', res.data['queued']);
         })
         .catch((err) => {
           console.log(err);
@@ -81,10 +90,13 @@ export default {
     fetchForbiddenSymbols({ commit, rootState }) {
       axios
         .get(`/api/forbidden_symbols/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
-          commit("SET_FORBIDDEN_SYMBOLS", res.data["forbidden_symbols"]);
+          commit('SET_FORBIDDEN_SYMBOLS', res.data['forbidden_symbols']);
         })
         .catch((err) => {
           console.log(err);
@@ -93,12 +105,15 @@ export default {
     fetchBestPerformingEquities({ commit, rootState }) {
       axios
         .get(`/api/best_performing_equities/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           commit(
-            "SET_BEST_PERFORMING_EQUITIES",
-            res.data["best_performing_equities"]
+            'SET_BEST_PERFORMING_EQUITIES',
+            res.data['best_performing_equities']
           );
         })
         .catch((err) => {
@@ -108,12 +123,15 @@ export default {
     fetchWorstPerformingEquities({ commit, rootState }) {
       axios
         .get(`/api/worst_performing_equities/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
           commit(
-            "SET_WORST_PERFORMING_EQUITIES",
-            res.data["worst_performing_equities"]
+            'SET_WORST_PERFORMING_EQUITIES',
+            res.data['worst_performing_equities']
           );
         })
         .catch((err) => {
@@ -123,10 +141,13 @@ export default {
     fetchStrategies({ commit, rootState }) {
       axios
         .get(`/api/strategies/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
-          commit("SET_STRATEGIES", res.data["strategies"]);
+          commit('SET_STRATEGIES', res.data['strategies']);
         })
         .catch((err) => {
           console.log(err);
@@ -135,10 +156,13 @@ export default {
     fetchOpenPositions({ commit, rootState }) {
       axios
         .get(`/api/open_positions/${rootState.account.account_id}`, {
-          headers: { "x-access-token": rootState.auth.token },
+          headers: {
+            'x-access-token': rootState.auth.token,
+            'Access-Control-Allow-Origin': '*',
+          },
         })
         .then((res) => {
-          commit("SET_OPEN_POSITIONS", res.data["open_positions"]);
+          commit('SET_OPEN_POSITIONS', res.data['open_positions']);
         })
         .catch((err) => {
           console.log(err);
@@ -151,7 +175,10 @@ export default {
             `/api/add_forbidden_symbol/${rootState.account.account_id}`,
             { symbol },
             {
-              headers: { "x-access-token": rootState.auth.token },
+              headers: {
+                'x-access-token': rootState.auth.token,
+                'Access-Control-Allow-Origin': '*',
+              },
             }
           )
           .then((res) => {
@@ -168,7 +195,10 @@ export default {
           .delete(
             `/api/remove_forbidden_symbol/${rootState.account.account_id}/${symbol}`,
             {
-              headers: { "x-access-token": rootState.auth.token },
+              headers: {
+                'x-access-token': rootState.auth.token,
+                'Access-Control-Allow-Origin': '*',
+              },
             }
           )
           .then((res) => {
@@ -186,7 +216,10 @@ export default {
             `/api/update_strategy/${rootState.account.account_id}`,
             { data },
             {
-              headers: { "x-access-token": rootState.auth.token },
+              headers: {
+                'x-access-token': rootState.auth.token,
+                'Access-Control-Allow-Origin': '*',
+              },
             }
           )
           .then((res) => {
