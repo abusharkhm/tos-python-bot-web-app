@@ -1,324 +1,202 @@
 <template>
   <div id="dashboard">
-    <Table :tableData="strategies" :tableName="'Strategies'" />
-    <Table :tableData="queue" :tableName="'Queued Orders'" />
-    <Table :tableData="positions" :tableName="'Open Positions'" />
-    <Table :tableData="forbidden" :tableName="'Forbidden Symbols'" />
+    <Tiles />
+    <div class="container">
+      <Account_Balance />
+      <Profit_Loss />
+      <Open_Positions />
+      <Strategies />
+      <Queue />
+      <Forbidden />
+      <Best_Performers />
+      <Worst_Performers />
+    </div>
   </div>
 </template>
 
 <script>
-import Table from "../components/Table.vue";
+import Tiles from '../components/Tiles.vue';
+import Open_Positions from '../components/Open_Positions.vue';
+import Strategies from '../components/Strategies.vue';
+import Queue from '../components/Queue.vue';
+import Forbidden from '../components/Forbidden.vue';
+import Best_Performers from '../components/Best_Performers.vue';
+import Worst_Performers from '../components/Worst_Performers.vue';
+import Account_Balance from '../components/Account_Balance.vue';
+import Profit_Loss from '../components/Profit_Loss.vue';
+
 export default {
-  Name: "Dashboard",
-  components: { Table },
-  data() {
-    return {
-      strategies: [],
-      positions: [],
-      queue: [],
-      forbidden: [],
-    };
+  name: 'Dashboard',
+  components: {
+    Tiles,
+    Open_Positions,
+    Strategies,
+    Queue,
+    Forbidden,
+    Best_Performers,
+    Worst_Performers,
+    Account_Balance,
+    Profit_Loss,
   },
-  methods: {
-    filterStrategies(strategies) {
-      strategies.forEach((strategy) => {
-        delete strategy.Account_ID;
-        delete strategy.Asset_Type;
-        delete strategy.Order_Type;
-        delete strategy.Position_Type;
+  mounted() {
+    this.$store.dispatch('fetchAccountBalanceHistory');
 
-        strategy.Active = strategy.Active === true ? "True" : "False";
-      });
+    this.$store.dispatch('fetchProfitLossHistory');
 
-      this.strategies = strategies;
-    },
+    this.$store.dispatch('fetchQueued');
 
-    filterPositions(positions) {
-      positions.forEach((position) => {
-        delete position._id;
-        delete position.Position_Size;
-        delete position.Trader;
-        delete position.Position_Type;
-        delete position.Data_Integrity;
-        delete position.Account_ID;
-        delete position.Entry_Price;
+    this.$store.dispatch('fetchForbiddenSymbols');
 
-        position.Entry_Date = this.formatDate(position.Entry_Date);
-      });
+    this.$store.dispatch('fetchBestPerformingEquities');
 
-      this.positions = positions;
-    },
-    filterQueue(queued) {
-      queued.forEach((queue) => {
-        delete queue._id;
-        delete queue.Direction;
-        delete queue.Trader;
-        delete queue.Order_ID;
-        delete queue.Order_Status;
-        delete queue.Account_ID;
-        delete queue.Position_Size;
-        delete queue.Position_Type;
-        delete queue.Side;
-        delete queue.Entry_Price;
-        delete queue.Asset_Type;
-        delete queue.Qty;
-        delete queue.Order_Type;
+    this.$store.dispatch('fetchWorstPerformingEquities');
 
-        queue.Entry_Date = this.formatDate(queue.Entry_Date);
-      });
+    this.$store.dispatch('fetchOpenPositions');
 
-      this.queue = queued;
-    },
+    this.$store.dispatch('fetchStrategies');
 
-    filterForbidden(forbidden) {
-      forbidden.forEach((forbidden) => {
-        delete forbidden._id;
-        delete forbidden.Account_ID;
+    // EVERY MINUTE
+    setInterval(() => {
+      this.$store.dispatch('fetchQueued');
 
-        if (forbidden.Created.length !== 10)
-          forbidden.Created = this.formatDate(forbidden.Created);
-      });
+      this.$store.dispatch('fetchBestPerformingEquities');
 
-      this.forbidden = forbidden;
-    },
+      this.$store.dispatch('fetchWorstPerformingEquities');
 
-    formatDate(date) {
-      var d = new Date(date),
-        month = "" + (d.getMonth() + 1),
-        day = "" + d.getDate(),
-        year = d.getFullYear();
+      this.$store.dispatch('fetchOpenPositions');
 
-      if (month.length < 2) month = "0" + month;
-      if (day.length < 2) day = "0" + day;
+      this.$store.dispatch('fetchStrategies');
+    }, 60000);
 
-      return [year, month, day].join("-");
-    },
-  },
+    // UPDATE CHARTS AT MIDNIGHT
+    function onMidnight() {
+      var now = new Date();
+      var night = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() + 1, // the next day, ...
+        0,
+        0,
+        0 // ...at 00:00:00 hours
+      );
+      return night.getTime() - now.getTime();
+    }
 
-  created() {
-    this.$store.watch(
-      (state) => state.strategies.strategies,
-      (newValue) => {
-        this.filterStrategies(JSON.parse(JSON.stringify(newValue)));
-      }
-    );
+    setInterval(() => {
+      this.$store.dispatch('fetchAccountBalanceHistory');
 
-    this.$store.watch(
-      (state) => state.positions.positions,
-      (newValue) => {
-        this.filterPositions(JSON.parse(JSON.stringify(newValue)));
-      }
-    );
-
-    this.$store.watch(
-      (state) => state.queue.queue,
-      (newValue) => {
-        this.filterQueue(JSON.parse(JSON.stringify(newValue)));
-      }
-    );
-
-    this.$store.watch(
-      (state) => state.forbidden.forbidden,
-      (newValue) => {
-        this.filterForbidden(JSON.parse(JSON.stringify(newValue)));
-      }
-    );
-
-    this.$store.dispatch("fetchStrategies");
-
-    this.$store.dispatch("fetchPositions");
-
-    this.$store.dispatch("fetchQueue");
-
-    this.$store.dispatch("fetchForbidden");
+      this.$store.dispatch('fetchProfitLossHistory');
+    }, onMidnight());
   },
 };
 </script>
 
 <style lang="scss">
 #dashboard {
-  display: grid;
-  gap: 1em;
-  overflow: auto;
-  padding: 1em 1em 4em 1em;
   position: relative;
-  height: 100vh;
+  margin: auto;
+  overflow: auto;
+  height: 100%;
+  width: 100%;
 
-  grid-auto-rows: minmax(200px, 275px);
-  grid-auto-columns: minmax(auto, 1fr);
-
-  grid-template-areas:
-    "strategies strategies queue"
-    "positions positions forbidden";
-
-  @media (max-width: 1400px) {
-    grid-template-areas:
-      "strategies strategies"
-      "positions positions"
-      "queue forbidden";
+  .border {
+    border: solid 1px $primary-dark;
+    margin-top: 1em;
+    height: 80%;
   }
 
-  & > div:nth-child(1) {
-    grid-area: strategies;
-  }
-
-  & > div:nth-child(2) {
-    grid-area: queue;
-  }
-
-  & > div:nth-child(3) {
-    grid-area: positions;
-  }
-
-  & > div:nth-child(4) {
-    grid-area: forbidden;
-  }
-
-  // FORBIDDEN SYMBOL
-  .add-forbidden-form-container {
-    &:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(1, 1, 1, 0.85);
-    }
-
-    form {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: $primary-dark;
-      padding: 1em;
-
-      display: grid;
-      gap: 2em;
-      border: solid 2px $primary-text;
-
-      button {
-        width: fit-content;
-        padding: 0.25em 1em;
-        float: right;
-        cursor: pointer;
-        transition: 0.2s ease;
-        background-color: $primary-red;
-        color: $primary-text;
-        border-radius: 2px;
-        border: solid 1px transparent;
-
-        &:hover {
-          opacity: 0.85;
-        }
-      }
-
-      input:not([type="submit"]) {
-        padding: 0.5em;
-        font-size: 1rem;
-        border-radius: 5px;
-        border: 1px solid $primary-light;
-      }
-
-      input[type="submit"] {
-        font-size: 1.1rem;
-        letter-spacing: 1.5px;
-        padding: 0.5em;
-        background-color: $primary-dark;
-        border-radius: 5px;
-        border: 1px solid $primary-light;
-        cursor: pointer;
-        transition: 0.2s ease;
-        color: $primary-light;
-
-        &:hover {
-          opacity: 0.85;
-        }
-      }
-    }
-  }
-
-  // Table popup
-  .table-popup-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+  table {
     width: 100%;
+    text-align: center;
+    margin-top: 1em;
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    th {
+      font-size: 0.9rem;
+      border-bottom: solid 1px $primary-green;
+      min-width: 50px;
+      max-width: 75px;
+    }
+
+    tr:nth-child(even) {
+      background-color: $primary-dark;
+    }
+
+    td {
+      font-size: 0.8rem;
+      padding: 0.4em 0;
+    }
+  }
+
+  .container {
+    padding: 2em;
     height: 100%;
-    background-color: rgba(1, 1, 1, 0.85);
+    display: grid;
+    gap: 2em;
+    width: 100%;
+    grid-auto-columns: 100%;
+
+    @media (min-width: 1300px) {
+      grid-template-areas:
+        'account_balance account_balance profit_loss profit_loss'
+        'strategies strategies open_positions open_positions'
+        'queued forbidden best_performers worst_performers';
+
+      grid-auto-rows: minmax(200px, 275px);
+
+      grid-auto-columns: minmax(auto, 1fr);
+
+      & > div:nth-child(1) {
+        grid-area: account_balance;
+      }
+
+      & > div:nth-child(2) {
+        grid-area: profit_loss;
+      }
+
+      & > div:nth-child(3) {
+        grid-area: open_positions;
+      }
+
+      & > div:nth-child(4) {
+        grid-area: strategies;
+      }
+
+      & > div:nth-child(5) {
+        grid-area: queued;
+      }
+
+      & > div:nth-child(6) {
+        grid-area: forbidden;
+      }
+
+      & > div:nth-child(7) {
+        grid-area: best_performers;
+      }
+
+      & > div:nth-child(8) {
+        grid-area: worst_performers;
+      }
+    }
+
+    .main-element-header {
+      display: flex;
+      justify-content: space-between;
+
+      .main-h5 {
+        font-size: 1rem;
+        text-decoration: underline;
+        color: $primary-green;
+      }
+    }
 
     & > div {
-      color: $primary-text;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 400px;
-      background-color: $primary-dark;
+      border: $primary-green ridge 1px;
+      color: white;
       padding: 1em;
-
-      display: grid;
-      gap: 0.5em;
-
-      border: solid 2px $primary-light;
-
-      .exit-popup {
-        width: fit-content;
-        padding: 0.25em 1em;
-        float: right;
-        cursor: pointer;
-        transition: 0.2s ease;
-        background-color: $primary-red;
-        color: $primary-text;
-        border-radius: 2px;
-        border: solid 1px transparent;
-
-        &:hover {
-          opacity: 0.85;
-        }
-      }
-
-      .danger-btn,
-      .success-btn {
-        width: fit-content;
-        padding: 0.25em 1em;
-        float: right;
-        cursor: pointer;
-        transition: 0.2s ease;
-        border-radius: 2px;
-        border: solid 1px transparent;
-
-        &:hover {
-          opacity: 0.85;
-        }
-      }
-
-      .danger-btn {
-        background-color: $primary-red;
-        color: $primary-text;
-      }
-
-      .success-btn {
-        background-color: $primary-light;
-        color: $primary-dark;
-      }
-
-      & div {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.25em;
-
-        input,
-        select {
-          padding: 0.25em;
-        }
-      }
-
-      & > div:nth-child(even) {
-        background-color: $third-dark;
-      }
+      background-color: rgba(0, 33, 43, 0.35);
     }
   }
 }
