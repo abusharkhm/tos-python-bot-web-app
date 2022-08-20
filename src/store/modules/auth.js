@@ -23,7 +23,7 @@ export default {
   actions: {
     login({ commit }, data) {
       axios
-        .post(`/auth/login`, data, {
+        .post(`/login`, data, {
           headers: {
             'Access-Control-Allow-Origin': '*',
           },
