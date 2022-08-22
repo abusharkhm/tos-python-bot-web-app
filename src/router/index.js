@@ -1,44 +1,44 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
-import store from '../store';
-import axios from 'axios';
-import NProgress from 'nprogress';
+import Vue from "vue";
+import VueRouter from "vue-router";
+import store from "../store";
+import axios from "axios";
+import NProgress from "nprogress";
 
-import Login from '../views/Login.vue';
-import Dashboard from '../views/Dashboard.vue';
-import Settings from '../views/Settings.vue';
+import Login from "../views/Login.vue";
+import Dashboard from "../views/Dashboard.vue";
+import Settings from "../views/Settings.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     component: Login,
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
+    path: "/dashboard",
+    name: "Dashboard",
     component: Dashboard,
   },
   {
-    path: '*',
-    redirect: { name: 'Dashboard' },
+    path: "*",
+    redirect: { name: "Dashboard" },
   },
   {
-    path: '/',
-    redirect: { name: 'Dashboard' },
+    path: "/",
+    redirect: { name: "Dashboard" },
   },
   {
-    path: '/settings',
-    name: 'Settings',
+    path: "/settings",
+    name: "Settings",
     component: Settings,
   },
 ];
 
 const router = new VueRouter({
   routes,
-  mode: 'history',
+  mode: "history",
 });
 
 const guard = function(to, from, next) {
@@ -46,7 +46,7 @@ const guard = function(to, from, next) {
   NProgress.start();
   axios
     .get(`/auth/checkAuthToken`, {
-      headers: { 'x-access-token': store.state.auth.access_token },
+      headers: { "x-access-token": store.state.auth.access_token },
     })
     .then(() => {
       // Token is valid, so continue
@@ -55,15 +55,15 @@ const guard = function(to, from, next) {
     })
     .catch(() => {
       // There was an error so redirect
-      next({ name: 'Login' });
+      next({ name: "Login" });
       NProgress.done();
     });
 };
 
 router.beforeEach((to, from, next) => {
-  document.title = to['name'] || 'Archaide'; // CHANGE THIS TO APP NAME
+  document.title = to["name"] || "Web App Name"; // CHANGE THIS TO APP NAME
 
-  if (to.name !== 'Login' && from.name !== 'Login') {
+  if (to.name !== "Login" && from.name !== "Login") {
     guard(to, from, next);
   } else next();
 });

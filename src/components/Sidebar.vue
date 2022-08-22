@@ -35,9 +35,8 @@ export default {
   color: $primary-text;
 
   #logo {
-    align-items: center;
+    text-align: center;
     padding: 1em;
-    background-image: url('/src/assets/archaide_logo.png');
   }
 
   #nav-link-container {

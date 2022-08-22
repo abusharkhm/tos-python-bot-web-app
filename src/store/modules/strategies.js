@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   state: {
@@ -19,24 +19,27 @@ export default {
       axios
         .get(`/strategies/${rootState.user.current_account}`, {
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "x-access-token": rootState.auth.access_token,
+            'Access-Control-Allow-Origin': '*',
+            'x-access-token': rootState.auth.access_token,
           },
         })
         .then((resp) => {
-          commit("SET_STRATEGY", resp.data["strategies"]);
+          commit('SET_STRATEGY', resp.data['strategies']);
         })
         .catch((err) => {
+          console.log(err.response);
           let error = err.response.data.error;
           console.log(error);
+          console.log(error);
+          console.log('here');
         });
     },
     saveStrategy({ commit, rootState }, data) {
       axios
         .put(`/strategies/${rootState.user.current_account}`, data, {
           headers: {
-            "Access-Control-Allow-Origin": "*",
-            "x-access-token": rootState.auth.access_token,
+            'Access-Control-Allow-Origin': '*',
+            'x-access-token': rootState.auth.access_token,
           },
         })
         .then(() => {
@@ -54,7 +57,7 @@ export default {
             return strategy;
           });
 
-          commit("SET_STRATEGY", strategies);
+          commit('SET_STRATEGY', strategies);
         })
         .catch((err) => {
           let error = err.response.data.error;
