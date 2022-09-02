@@ -25,6 +25,11 @@ export default {
 </script>
 
 <style lang="scss">
+@media (max-width: 767px) {
+  #sidebar {
+    display: none;
+  }
+}
 #sidebar {
   background-color: $primary-dark;
   width: fit-content;
