@@ -17,7 +17,7 @@ export default {
       strategies: [],
       positions: [],
       queue: [],
-      forbidden: [],
+      // forbidden: [],
     };
   },
   methods: {
@@ -71,17 +71,17 @@ export default {
       this.queue = queued;
     },
 
-    filterForbidden(forbidden) {
-      forbidden.forEach((forbidden) => {
-        delete forbidden._id;
-        delete forbidden.Account_ID;
+    // filterForbidden(forbidden) {
+    //   forbidden.forEach((forbidden) => {
+    //     delete forbidden._id;
+    //     delete forbidden.Account_ID;
 
-        if (forbidden.Created.length !== 10)
-          forbidden.Created = this.formatDate(forbidden.Created);
-      });
+    //     if (forbidden.Created.length !== 10)
+    //       forbidden.Created = this.formatDate(forbidden.Created);
+    //   });
 
-      this.forbidden = forbidden;
-    },
+    //   this.forbidden = forbidden;
+    // },
 
     formatDate(date) {
       var d = new Date(date),
@@ -118,12 +118,12 @@ export default {
       }
     );
 
-    this.$store.watch(
-      (state) => state.forbidden.forbidden,
-      (newValue) => {
-        this.filterForbidden(JSON.parse(JSON.stringify(newValue)));
-      }
-    );
+    // this.$store.watch(
+    //   (state) => state.forbidden.forbidden,
+    //   (newValue) => {
+    //     this.filterForbidden(JSON.parse(JSON.stringify(newValue)));
+    //   }
+    // );
 
     this.$store.dispatch('fetchStrategies');
 
@@ -131,7 +131,7 @@ export default {
 
     this.$store.dispatch('fetchQueue');
 
-    this.$store.dispatch('fetchForbidden');
+    // this.$store.dispatch('fetchForbidden');
   },
 };
 </script>
@@ -149,14 +149,22 @@ export default {
   grid-auto-columns: minmax(auto, 1fr);
 
   grid-template-areas:
-    'strategies strategies queue'
-    'positions positions forbidden';
+    'strategies strategies'
+    'positions positions'
+    'queue queue';
 
   @media (max-width: 1400px) {
     grid-template-areas:
       'strategies strategies'
       'positions positions'
-      'queue forbidden';
+      'queue queue';
+  }
+
+  @media (max-width: 767px) {
+    grid-template-areas:
+      'strategies strategies'
+      'positions positions'
+      'queue queue';
   }
 
   & > div:nth-child(1) {
